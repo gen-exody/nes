@@ -1,0 +1,12 @@
+resources/binary/apparel_10to14_review_cosine.faissindex
+resources/binary/apparel_15to25_review_cosine.faissindex
+resources/data/apparel_10to14_embedding.pkl
+resources/data/apparel_10to14.tsv.gz
+resources/data/apparel_15to25_embedding.pkl
+resources/data/apparel_15to25.tsv.gz
+resources/data/apparel_2015.tsv
+resources/data/temp/df_adj.csv
+resources/data/temp/df_opposite_query_plot_antonym.csv
+resources/data/temp/df_opposite_query_plot_rewrite.csv
+resources/data/temp/df_query_plot.csv
+notebooks/nes.ini
