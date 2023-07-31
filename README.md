@@ -1,6 +1,6 @@
 # Customer Review Driven Product Search Engine
 
-*Elaine Chen, Gen Ho, Varshini*
+*Elaine Chen, Gen Ho, Varshini Rana*
 
 
 ## Background & Motivation
