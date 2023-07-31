@@ -1,16 +1,13 @@
-# 1. This is a test
+# Customer Review Driven Product Search Engine
 
-This is a test to see how things work 
-- Another list
-- why this is in different style 
-- But I think the 2nd one is cooler
+*Elaine Chen, Gen Ho, Varshini*
 
-# 2. This is the 2nd paragraph 
 
-    - Create a list
-    - 2nd item
-    - 3rd item 
+## Background & Motivation
 
-# 3. Some other test
+When customers go online to purchase from e-commerce websites, product reviews are a vital source of information to reference as the target products cannot be physically touched. However, reading through all the reviews and comparing across different products could be time consuming and challenging.  
 
-1. **Test** to bold a word
+We propose to build a product search application which allows customers to search by natural language queries. Unlike traditional product search engines which are mainly based on predefined categories and keywords in product descriptions, this solution will return results with the consideration of customer reviews. We believe this search engine can greatly improve customer experience over product searching on e-commerce websites. 
+
+
+
