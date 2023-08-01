@@ -10,3 +10,4 @@ resources/data/temp/df_opposite_query_plot_antonym.csv
 resources/data/temp/df_opposite_query_plot_rewrite.csv
 resources/data/temp/df_query_plot.csv
 notebooks/nes.ini
+resources/data/apparel_15to25_product_title_only.pkl
