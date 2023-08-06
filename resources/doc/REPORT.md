@@ -22,10 +22,108 @@ On the other hand, we have also formulated our own ranking algorithm with the ai
 
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
 
-![Logical Architecture](https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true) <figcaption>Fig. 1 Application Logical Architecture.</figcaption>
+<figure>
+  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" alt="Logical Architecture"/>
+  <figcaption>Figure 1: Application Logical Architecture.</figcaption>
+</figure>  
+  
+1. Use OpenAI service to transform the documents of `product_tile + review_body` into document embeddings
+2. The document embeddings are indexed by Faiss 
+3. Use OpenAI service to transform the product search query into query embeddings
+4. Conduct a similarity search over  the Faiss index with the query embeddings
+5. The returned result is sent to our ranking algorithm to produce the finalized, ranked result. 
+
+
+## Implementation 
+
+In this section we will go over the major techniques and considerations for building the search engine.    
+
+### Create Embeddings
+
+Rather than reinventing the wheel by training our own embeddings, we have decided to use the service offered by OpenAI. Specifically, we have used the `text-embedding-ada-002` model for transforming text into embeddings. This is the best embedding model offered by OpenAI as of now <sup>[2]</sup>. 
+
+Creating embedding using API is straightforward, just calling the `openai.Embedding.create()` API then things can be done. However, there is a problem with calling OpenAI service with a large number of calls, that is the rate limit. The rate limit is a restriction that an API imposes on the number of times a client can access the server within a specified period of time. Exceptions will be thrown during our code execution if we call the API in a single batch with our data (around 90k records). Luckily, there are workarounds. 
+
+The first strategy we employed is using the [Python Tenacity Library](https://github.com/jd/tenacity) to set up a retry mechanism. The second strategy we used is dividing the API calls in batches with 60s delay between each call. 
+OpenAI has an [official document](https://platform.openai.com/docs/guides/rate-limits/error-mitigation) talking about this rate limit issue and the error mitigation strategy. 
+
+Here is our implementation.
+
+```python
+# helper function 
+def get_embedding(text, model="text-embedding-ada-002"):
+   text = text.replace("\n", " ")
+   return openai.Embedding.create(input = [text], model=model)['data'][0]['embedding']
+
+# Use tenacity retry to tackle the OpenAI "rate limits" problem
+# reference: https://platform.openai.com/docs/guides/rate-limits/error-mitigation
+@retry(wait=wait_random_exponential(min=1, max=60), stop=stop_after_attempt(6))
+def get_embedding_with_backoff(**kwargs):
+    return get_embedding(**kwargs)
+
+def transform_column_to_embedding(df, source_column, target_column_name, rate_limit_per_minute=3000, delay=60.0):
+    
+    num_of_batch = math.ceil(len(df) / rate_limit_per_minute)
+    # also use batch strategy to handle the OpenAI "rate limits" problem apart from the retry mechanism above 
+    chunks = []
+    tqdm.pandas(desc='Processing rows')
+    for chunk in np.array_split(df, num_of_batch):
+        chunk[target_column_name] = chunk[source_column].progress_apply(lambda x:get_embedding_with_backoff(text=x))
+        chunks.append(chunk)
+        time.sleep(delay)
+
+    return pd.concat(chunks, ignore_index=True)
+```
+
+### Create Index
+
+We use the [Facebook AI Similarity Search (Faiss)](https://github.com/facebookresearch/faiss/wiki/) for vector index creation and similarity search. Faiss offers different kinds of index types. For our use case, we prefer cosine similarity over euclidean distance for similarity (or distance) measurement in building the indexes because of two major reasons <sup>[3]</sup>.   
+
+- cosine similarity is calculated based on the angle between two vectors rather than their magnitudes, thus is better for comparing sentences of variety lengths.   
+- cosine similarity is ranged from -1 (completely dissimilar) to 1 (highly similar) which allows intuitive analysis and comparison. 
+
+Faiss does not directly provide an index type of cosine similarity. However, it does provide an index using the inner product - [IndexFlatIP](https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances#metric_inner_product). We just need to normalize the document vectors before creating the index, also normalize the query vector prior the search, then the inner product becomes cosine similarity.
+
+Here is our implementation.
+
+```python
+# initialize the IndexFlatIP with the embedding dimension 
+index_dev = faiss.IndexFlatIP(len(df_development['embedding'][0]))
+index_dev.is_trained
+
+# create the embeddings array
+# this array is required by faiss to be float32 
+embeddings_dev = np.array(df_development['embedding'].to_list(), dtype='float32')
+
+# Normalize the embeddings and add to to the index
+faiss.normalize_L2(embeddings_dev)
+index_dev.add(embeddings_dev)
+```
+
+### Design Ranking Algorithm
+
+Although our search engine allows the searching of products with the context from user reviews, in the end what a customer wants is a list of products which matches the search criteria. Thus,  we need to find a way to group the returning records in product level and order them according to the relevance to the search query.
+
+Under current implementation, the engine will fetch the top 100 similar records. We firstly normalize the cosine similarity of each record by dividing it with the maximum similarity of the result set. Then we can calculate the product level similarity score.  
+
+We have come up with 3 strategies for calculating the product level similarity score. 
+
+1. **Average**
+
+   To get the product level similarity score, the most intuitive way is taking the arithmetic mean of  the review level scores. However, the result could be easily affected by extreme values. More importantly, this does not reflect the collective information across reviews. We consider this method as the baseline for comparison.
+
+2. **Discounted Reward**
+
+   As each review can contain specific information, in calculating the product level similarity score, we should collectively consider all reviews. On the other hand, we actually want to reward a product with more reviews that match the search criteria since it increases a customer’s confidence in this product. Therefore, aggregation is a better choice than averaging. However, we also do not want the result to be dominated by the number of reviews at the same time. So, here comes the idea of Discounted Reward.
+
+   Under this method, we firstly sort records by similarity scores in descending order within each product. Then, we have 
 
 
 
 ## References
 
 [1] Davis Liang et al. (Sep 22, 2020). "Embedding-based Zero-shot Retrieval through Query Generation" https://arxiv.org/abs/2009.10270. Accessed Jul 10, 2023
+
+[2] Ryan Greene et al. (Dec 15, 2022). "New and improved embedding model" https://openai.com/blog/new-and-improved-embedding-model. Accessed Jul 2, 2023
+
+[3] baeldung. (Nov 24, 2022). "Euclidean Distance vs Cosine Similarity" https://www.baeldung.com/cs/euclidean-distance-vs-cosine-similarity. Accessed Jun 30, 2023
