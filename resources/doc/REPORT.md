@@ -19,9 +19,10 @@ We used the [Amazon Customer Review](https://www.kaggle.com/datasets/cynthiaremp
 Our solution is an embedding-based retrieval (EBR) system where the embeddings are created by the Large Language Model (LLM), OpenAI GPT-3 specifically.   
 EBR is widely accepted nowadays as a better approach than traditional term-based retrieval methods for information retrieval as term-based methods only focus on exact matching, thus lack the consideration for semantically related words <sup>[1]</sup>.  
 On the other hand, we have also formulated our own ranking algorithm with the aid of a mechanism which we called the opposite query.  
-   
+
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
 
+![Logical Architecture](https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true) <figcaption>Fig. 1 Application Logical Architecture.</figcaption>
 
 
 
