@@ -216,10 +216,16 @@ Apart from designing and building the ranking algorithm, we also conducted an un
 
 We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to PCA. 
 
-In preparing the below scatter plot of the 2 dimensions, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation.
+In preparing the below scatter plot **(Figure 5)**, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation.
 
+<figure>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/unsupervised_analysis.png?raw=true" alt="Product Type Analysis"/>
+    <figcaption>Figure 5: Product Types Analysis </figcaption>
+</figure>
 
+Please refer to the Appendix for the list of queries we have defined. 
 
+## Result Analysis 
 
 
 
