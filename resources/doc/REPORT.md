@@ -189,16 +189,36 @@ We have come up with 3 strategies for calculating the product level similarity s
 
    #### Design the formula for adjustment with opposite query 
 
-   After investigating the search results sorted by distance_opposite in descending order, we found that while top portions are really far away from the opposite query, their contents were not most relevant to the original search query. This means we cannot just adding the reciprocal of the opposite query distance as a penalty term (we want to penalize reviews closer to the opposite query thus taking reciprocal) since this would potentially overboost those product_title + review_body that are actually not relevant to the product search.
+   After investigating the search results sorted by distance_opposite in descending order, we found that while top portions are really far away from the opposite query, their contents were not most relevant to the original search query **(Figure 3)**. This means we cannot just adding the reciprocal of the opposite query distance as a penalty term (we want to penalize reviews closer to the opposite query thus taking reciprocal) since this would potentially overboost those `product_title + review_body` that are actually not relevant to the product search.
+
+   <figure>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/opposite_query_top5.png?raw=true" alt="Top 5 results sorted by distance_opposite in descending order"/>
+    <figcaption>Figure 3: Top 5 results sorted by distance_opposite in descending order</figcaption>
+   </figure>  
    
    We came up with 2 strategies to handle this issue. 
-   - We have introduced a clipping mechanism where we flatten  certain portions of the top ranked (descending order) opposite query distances.Through testing with different samples, we have decided to clip the top 10 percentile for our implementation. The idea can be illustrated by Figure x below.
+   - We have introduced a clipping mechanism where we flatten certain portions of the top ranked (descending order) opposite query distances. Through testing with different samples, we have decided to clip the top 10 percentile for our implementation. The idea is illustrated by **Figure 4** below.
    - We have added weight to the penalty term which has been set to 0.5 in our implementation.  
+
+   <figure>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/clipping.png?raw=true" alt="Clipping"/>
+    <figcaption>Figure 4: Distance before and after clipping (highlighted in red) </figcaption>
+   </figure>
 
    The finalized formula for the adjusted distance is shown below. 
 
       $$Adjusted Distance =  \operatorname{clip} f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
-   where $D_{original}$ is the cosine distance of the original query, $D_{opposite} is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
+   where $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
+
+## Unsupervised Data Analysis  
+
+Apart from designing and building the ranking algorithm, we also conducted an unsupervised data analysis over our development dataset. The objective was to identify product types in the dataset in order to support the construction of the product search queries for development and  result evaluation. 
+
+We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to PCA. 
+
+In preparing the below scatter plot of the 2 dimensions, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation.
+
+
 
 
 
