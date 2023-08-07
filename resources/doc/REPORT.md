@@ -116,7 +116,91 @@ We have come up with 3 strategies for calculating the product level similarity s
 
    As each review can contain specific information, in calculating the product level similarity score, we should collectively consider all reviews. On the other hand, we actually want to reward a product with more reviews that match the search criteria since it increases a customer’s confidence in this product. Therefore, aggregation is a better choice than averaging. However, we also do not want the result to be dominated by the number of reviews at the same time. So, here comes the idea of Discounted Reward.
 
-   Under this method, we firstly sort records by similarity scores in descending order within each product. Then, we have 
+   Under this method, we firstly sort records by similarity scores in descending order within each product. Then, we have:
+
+   $$Product Similarity Score = \displaystyle\sum_{i=1}^{n}\frac{S_i}{2^2}$$
+   where $S$ is the record level similarity score, $n$ is the total number of records within a product, $i$ is the rank of the current record
+
+   The idea here is to discount the similarity score by 2 to the power of the rank of the record, then adding the results up.
+
+3. **Discounted Reward with Adjustment by Opposite Query**  
+
+   Customer reviews provide very rich context for product searches. However, with similarity search, there could be chances that the returning result contains contradictory information against the search query. 
+   
+   For example, let's say we want to search for **_“Cotton socks for men which are breathable and keep feet cool for summer time.”_** The returning result could be **_“These cotton socks are breathable but still make my feet too warm during summer”_**. Here, while these two sentences are very similar, there is a contradicting concept - cool vs. warm. 
+   
+   In order to address this and hence further enhance the accuracy of the search result, we introduce the opposite query. The idea is to find the distance between the original search results against a query that has opposite ideas from the original query. The resulting distance can then be used to penalize the search result from the original query if they are close to the opposite query. 
+
+   #### Generate Opposite Query
+
+   In a traditional product search engine, the query criteria is built around the product titles and perhaps descriptions. Thus, most of the wordings are nouns. However, for user reviews, there can be lots of adjectives since they talk about user experience. So, in designing the opposite query, we target to transform the adjectives into their antonyms. 
+   
+   To generate the opposite query, we again use OpenAI service. This time, we use the `openai.Completion.create()` [API](https://platform.openai.com/docs/guides/gpt/completions-api) with the `text-davinci-003` model.   
+
+   ```python
+   def generate_opposite_query(orignal_query='', prompt=''):
+
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt.format(orignal_query),
+            temperature=0,
+            max_tokens=1000,
+            top_p=1.0,
+            frequency_penalty=0.0,
+            presence_penalty=0.0
+        )
+        return response['choices'][0]['text']
+   ```
+   Our initiation idea was to write the original query by replacing all the adjectives into their corresponding antonyms. For example: 
+   - **Original Query**: _Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer._
+   - **Opposite Query**: _Wrinkle-ridden chiffon blouse, bulky style, short sleeve, baggy fit, with uncomfortable inside layer._ 
+   
+   However, upon reviewing the line chart of the distance between the original query and the search results, plus the one of the opposite query, we found the behavior was not as expected. Specifically, the two lines were too close which can not effectively reflect the opposite concept. We suspected this was caused by the nouns in the query (refer to fig. …left) 
+
+   <figure>
+        <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" alt="Logical Architecture"/>
+        <figcaption>Figure 1: Application Logical Architecture.</figcaption>
+    </figure>  
+   
+   Then we changed our strategy to just build the opposite query with the antonyms and their meanings. This became:
+   - **Original Query**: _Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer._
+   - **Opposite Query**: _Wrinkled means having many creases or folds. Clumsy means lacking grace in movement or posture. Short means having little length. Bulky means large and unwieldy. Uncomfortable means causing discomfort.
+   The resulting line chart looked more reasonable than the first one (refer to fig.. right) and we decided to pick this option._
+   
+   Here is the prompt for calling the OpenAI service. 
+   ```python
+   prompt_antonym="""
+    You are an English teacher. You need to find every single ADJECTIVE from the sentences delimited by triple backquotes below.
+    Then, you transform every adjective into its antonym.
+    Finally, give the dictionary meaning for each antonym.
+    Below are two examples. You need to comlete the third one. 
+    
+
+    Text 1: Kids flip flops for girl, cute, good fit, comfortable and durable, low price
+    Output 1: Artless means without guile or deception. Unsuited means not proper or fitting for something. Uncomfortable means causing discomfort.  Fragile means easily broken. Costly means expensive.
+    ## 
+    Text 2: Long sleeve shirts for men. Wrinkle-free, thick but breathable and slim fit
+    Output 2: Short means having little length. Crinkle means to form many short bends or ripples. Thin means measuring little in cross section or diameter. Airtight means impermeable to air or nearly so. Wide means having a greater than usual measure across
+    ##
+    Text 3:  ```{}```
+    Output 3:
+    """
+   ```
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
 
 
 
