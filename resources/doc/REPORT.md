@@ -206,8 +206,10 @@ We have come up with 3 strategies for calculating the product level similarity s
    </figure>
 
    The finalized formula for the adjusted distance is shown below. 
+   
 
-      $$Adjusted Distance =  \operatorname{clip} f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
+      $$Adjusted Distance =  clip\ f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
+
    where $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
 
 ## Unsupervised Data Analysis  
@@ -233,24 +235,6 @@ Please refer to the Appendix for the list of queries we have defined.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
 ## References
 
 [1] Davis Liang et al. (Sep 22, 2020). "Embedding-based Zero-shot Retrieval through Query Generation" https://arxiv.org/abs/2009.10270. Accessed Jul 10, 2023
@@ -258,3 +242,5 @@ Please refer to the Appendix for the list of queries we have defined.
 [2] Ryan Greene et al. (Dec 15, 2022). "New and improved embedding model" https://openai.com/blog/new-and-improved-embedding-model. Accessed Jul 2, 2023
 
 [3] baeldung. (Nov 24, 2022). "Euclidean Distance vs Cosine Similarity" https://www.baeldung.com/cs/euclidean-distance-vs-cosine-similarity. Accessed Jun 30, 2023
+
+## Appendix
