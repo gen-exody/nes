@@ -155,27 +155,27 @@ We have come up with 3 strategies for calculating the product level similarity s
    - **Original Query**: _Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer._
    - **Opposite Query**: _Wrinkle-ridden chiffon blouse, bulky style, short sleeve, baggy fit, with uncomfortable inside layer._ 
    
-   However, upon reviewing the line chart of the distance between the original query and the search results, plus the one of the opposite query, we found the behavior was not as expected. Specifically, the two lines were too close which can not effectively reflect the opposite concept. We suspected this was caused by the nouns in the query (refer to fig. …left) 
+   However, upon reviewing the line chart **(Figure 2, left)** of the distance between the original query and the search results, plus the one of the opposite query, we found the behavior was not as expected. Specifically, the two lines were too close which can not effectively reflect the opposite concept. We suspected this was caused by the nouns in the query.
 
    <figure>
-        <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" alt="Logical Architecture"/>
-        <figcaption>Figure 1: Application Logical Architecture.</figcaption>
-    </figure>  
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/design_opposite_query.png?raw=true" alt="Design Opposite Query"/>
+    <figcaption>Figure 2: (Left) Rewrite Whole Query. (Right) Use Antonyms with corresponding meaning</figcaption>
+   </figure>  
    
    Then we changed our strategy to just build the opposite query with the antonyms and their meanings. This became:
    - **Original Query**: _Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer._
-   - **Opposite Query**: _Wrinkled means having many creases or folds. Clumsy means lacking grace in movement or posture. Short means having little length. Bulky means large and unwieldy. Uncomfortable means causing discomfort.
-   The resulting line chart looked more reasonable than the first one (refer to fig.. right) and we decided to pick this option._
+   - **Opposite Query**: _Wrinkled means having many creases or folds. Clumsy means lacking grace in movement or posture. Short means having little length. Bulky means large and unwieldy. Uncomfortable means causing discomfort._
+   
+   The resulting line chart **(Figure 2, right)** looked more reasonable than the first one  and we decided to pick this option.
    
    Here is the prompt for calling the OpenAI service. 
    ```python
-   prompt_antonym="""
+   prompt = """
     You are an English teacher. You need to find every single ADJECTIVE from the sentences delimited by triple backquotes below.
     Then, you transform every adjective into its antonym.
     Finally, give the dictionary meaning for each antonym.
     Below are two examples. You need to comlete the third one. 
     
-
     Text 1: Kids flip flops for girl, cute, good fit, comfortable and durable, low price
     Output 1: Artless means without guile or deception. Unsuited means not proper or fitting for something. Uncomfortable means causing discomfort.  Fragile means easily broken. Costly means expensive.
     ## 
@@ -186,6 +186,27 @@ We have come up with 3 strategies for calculating the product level similarity s
     Output 3:
     """
    ```
+
+   #### Design the formula for adjustment with opposite query 
+
+   After investigating the search results sorted by distance_opposite in descending order, we found that while top portions are really far away from the opposite query, their contents were not most relevant to the original search query. This means we cannot just adding the reciprocal of the opposite query distance as a penalty term (we want to penalize reviews closer to the opposite query thus taking reciprocal) since this would potentially overboost those product_title + review_body that are actually not relevant to the product search.
+   
+   We came up with 2 strategies to handle this issue. 
+   - We have introduced a clipping mechanism where we flatten  certain portions of the top ranked (descending order) opposite query distances.Through testing with different samples, we have decided to clip the top 10 percentile for our implementation. The idea can be illustrated by Figure x below.
+   - We have added weight to the penalty term which has been set to 0.5 in our implementation.  
+
+   The finalized formula for the adjusted distance is shown below. 
+
+      $$Adjusted Distance =  \operatorname{clip} f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
+   where $D_{original}$ is the cosine distance of the original query, $D_{opposite} is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
+
+
+
+
+
+
+
+
 
 
 
