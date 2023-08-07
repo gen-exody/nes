@@ -223,7 +223,7 @@ In preparing the below scatter plot **(Figure 5)**, we colored the dots with the
 <figure>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/unsupervised_analysis.png?raw=true" alt="Product Type Analysis"/>
     <figcaption>Figure 5: Product Types Analysis </figcaption>
-</figure>
+</figure>  
 
 Please refer to the Appendix for the list of queries we have defined. 
 
