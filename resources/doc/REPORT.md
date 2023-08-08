@@ -211,7 +211,7 @@ We have come up with 3 strategies for calculating the product level similarity s
 
       $$Adjusted Distance =  clip\ f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
 
-   where $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
+   where $clip\ f()$ is our custom function for clipping, $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
 
 ## Unsupervised Data Analysis  
 
@@ -232,6 +232,35 @@ Please refer to the Appendix for the list of queries we have defined.
 
 ## Result Analysis 
 
+We have defined 9 queries to search over the evaluation dataset (products with 11-14 reviews). The output was then rated by 3 raters with a scale of 1 to 5 where 1 denoted “Not relevant at all” while 5 denoted “Perfectly relevant”. 
+
+We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. i) average, ii) discounted reward, and iii) discounted reward with adjustment by opposite query. 
+
+> NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[4]</sup>
+
+For the details on how NDCG is calculated, we highly recommend this article [“Demystifying NDCG” by Aparna Dhinakaran](https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0). 
+
+Based on the scores collected from the 3 raters, we calculated the NDCG at 3, 5, and 10 which refers to scores calculated up to the top 3, 5 and 10 results respectively. 
+
+Below table (Table 1) shows the resulting mean NDCG@n scores across the 3 ranking methods. 
+
+| Ranking Method                | Mean NDCG@3   | Mean NDCG@5   | Mean NDCG@10  |
+| :--------------------------   | -----------:  | ----------:   | -----------:  |
+| Average                       | 0.819         | 0.847         | 0.935         |
+| Discounted Reward Only        | 0.837         | 0.861         | 0.939         |
+| Discounted Reward with Adjustment by Opposite Query   | 0.837 | 0.862 | 0.941 |
+
+Table 1: NDCG@n scores across the 3 ranking methods
+
+The visualization below on the left (Figure 6, left)  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right (Figure 6, right) shows the top ranking method (with highest mean value) for the 9 queries. 
+
+<figure>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="Evaluation Result Analysis"/>
+    <figcaption>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</figcaption>
+</figure>  
+
+
+
 
 
 
@@ -240,10 +269,12 @@ Please refer to the Appendix for the list of queries we have defined.
 
 ## References
 
-[1] Davis Liang et al. (Sep 22, 2020). "Embedding-based Zero-shot Retrieval through Query Generation" https://arxiv.org/abs/2009.10270. Accessed Jul 10, 2023
+[1] Davis Liang et al. (Sep 22, 2020). "Embedding-based Zero-shot Retrieval through Query Generation". https://arxiv.org/abs/2009.10270. Accessed Jul 10, 2023
 
-[2] Ryan Greene et al. (Dec 15, 2022). "New and improved embedding model" https://openai.com/blog/new-and-improved-embedding-model. Accessed Jul 2, 2023
+[2] Ryan Greene et al. (Dec 15, 2022). "New and improved embedding model". https://openai.com/blog/new-and-improved-embedding-model. Accessed Jul 2, 2023
 
-[3] baeldung. (Nov 24, 2022). "Euclidean Distance vs Cosine Similarity" https://www.baeldung.com/cs/euclidean-distance-vs-cosine-similarity. Accessed Jun 30, 2023
+[3] baeldung. (Nov 24, 2022). "Euclidean Distance vs Cosine Similarity". https://www.baeldung.com/cs/euclidean-distance-vs-cosine-similarity. Accessed Jun 30, 2023
+
+[4] Aparna Dhinakaran. (Jan 25, 2023). "Demystifying NDCG - How to best use this important metric for monitoring ranking models". https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0. Accessed Jul 16, 2023 
 
 ## Appendix
