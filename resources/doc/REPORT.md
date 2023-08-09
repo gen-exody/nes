@@ -217,7 +217,7 @@ We have come up with 3 strategies for calculating the product level similarity s
 
 Apart from designing and building the ranking algorithm, we also conducted an unsupervised data analysis over our development dataset. The objective was to identify product types in the dataset in order to support the construction of the product search queries for development and  result evaluation. 
 
-We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to PCA. 
+We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis)<sup>[4]</sup>. 
 
 In preparing the below scatter plot **(Figure 5)**, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation. 
 
@@ -236,13 +236,13 @@ We have defined 9 queries to search over the evaluation dataset (products with 1
 
 We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. i) average, ii) discounted reward, and iii) discounted reward with adjustment by opposite query. 
 
-> NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[4]</sup>
+> NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[5]</sup>
 
 For the details on how NDCG is calculated, we highly recommend this article [“Demystifying NDCG” by Aparna Dhinakaran](https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0). 
 
 Based on the scores collected from the 3 raters, we calculated the NDCG at 3, 5, and 10 which refers to scores calculated up to the top 3, 5 and 10 results respectively. 
 
-Below table (Table 1) shows the resulting mean NDCG@n scores across the 3 ranking methods. 
+Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ranking methods. 
 
 | Ranking Method                | Mean NDCG@3   | Mean NDCG@5   | Mean NDCG@10  |
 | :--------------------------   | -----------:  | ----------:   | -----------:  |
@@ -252,12 +252,27 @@ Below table (Table 1) shows the resulting mean NDCG@n scores across the 3 rankin
 
 Table 1: NDCG@n scores across the 3 ranking methods
 
-The visualization below on the left (Figure 6, left)  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right (Figure 6, right) shows the top ranking method (with highest mean value) for the 9 queries. 
+The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. You can refer to the Appendix for the detailed scores. 
+
 
 <figure>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="Evaluation Result Analysis"/>
     <figcaption>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</figcaption>
 </figure>  
+
+
+From the table and visualizations above, we can notice that generally the *Method 2) Discounted Reward Only* and *Method 3) Discounted Reward with Adjustment by Opposite Query* performed better than the *Method 1) Average*. However, *Method 2* is just a tiny bit better than *Method 3* in NDCG@5 and NDCG@10. The 95% confidence intervals are very similar for all three methods within the same NDCG group. On the other hand, *Method 1* had a 37% (10/27) chance of getting the best results while for *Method 2* and *Method 3* it was 41% (11/27) and 22% (6/27) respectively.
+
+
+Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 2* had almost a double chance to outperform *Method 3*. It means *Method 3* performed much better in some cases only but not all. 
+
+*Method 2* and *Method 3* performed better than *Method 1* in terms of NDCG scores which is within our expectation since *Method 2 and 3* have considered the collective information from all reviews which can better represent human decision models. However, the Opposite Query of *Method 3* did not perform as good as we originally thought. 
+
+Through investigation, we believe the reason boils down to a problem with our assumption. We assume semantic oppositeness means a complete inverse of semantic similarity in the computing domain, while we have tried to use this oppositeness measure to find the contradicting concepts in customer reviews with the opposite queries. 
+
+We took an example to further illustrate the idea. Here we use this original query and its corresponding opposite query to create the visualizations below. 
+- **Original Query**: _Long thin cotton socks for men, need to be breathable, even feeling cool for summer time._
+- **Opposite Query**: _Short means having little length. Thick means having a greater than usual measure across. Unbreathable means not allowing air to pass through. Hot means having or giving out a great deal of heat._
 
 
 
@@ -275,6 +290,8 @@ The visualization below on the left (Figure 6, left)  shows the mean NDCG scores
 
 [3] baeldung. (Nov 24, 2022). "Euclidean Distance vs Cosine Similarity". https://www.baeldung.com/cs/euclidean-distance-vs-cosine-similarity. Accessed Jun 30, 2023
 
-[4] Aparna Dhinakaran. (Jan 25, 2023). "Demystifying NDCG - How to best use this important metric for monitoring ranking models". https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0. Accessed Jul 16, 2023 
+[4] Ron Rotkopf. (Jan 4, 2021). "Less is more: An Intro to Dimensionality Reduction". http://dors.weizmann.ac.il/course/workshop2021/scRNA/Dimensionality_Reduction.pdf. Accessed Jul 3, 2023
+
+[5] Aparna Dhinakaran. (Jan 25, 2023). "Demystifying NDCG - How to best use this important metric for monitoring ranking models". https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0. Accessed Jul 16, 2023 
 
 ## Appendix
