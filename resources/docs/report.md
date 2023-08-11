@@ -1,12 +1,14 @@
 # Customer Review Driven Product Search Engine
 
-*Elaine Chen, Gen Ho, Varshini Rana*
+*This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*
+
+*Elaine Chen, Gen Ho, Varshini Rana (8-14-2023)*
 
 ## Motivation 
 
 When customers go online to purchase from e-commerce websites, product reviews are a vital source of information to reference as the target products cannot be physically touched. However, reading through all the reviews and comparing across different products could be time consuming and challenging. 
 
-We propose to build a product search application which allows customers to search by natural language queries. Unlike traditional product search engines which are mainly based on predefined categories and keywords in product descriptions, our proposed solution returns results with consideration of customer reviews. We believe this search engine can greatly improve customer experience over product searching on e-commerce websites. 
+We propose to build a product search application which allows customers to search with natural language queries. Unlike traditional product search engines which are mainly based on predefined categories and keywords in product descriptions, our proposed solution returns results with consideration of customer reviews. We believe this search engine can greatly improve customer experience over product searching on e-commerce websites. 
 
 ## Data Source and scope
 
@@ -230,11 +232,11 @@ Please refer to the Appendix for the list of queries we have defined.
     
  
 
-## Result Analysis 
+## Result Evaluation and  Analysis 
 
 We have defined 9 queries to search over the evaluation dataset (products with 11-14 reviews). The output was then rated by 3 raters with a scale of 1 to 5 where 1 denoted “Not relevant at all” while 5 denoted “Perfectly relevant”. 
 
-We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. i) average, ii) discounted reward, and iii) discounted reward with adjustment by opposite query. 
+We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. *i) Average*, *ii) Discounted Reward*, and *iii) Discounted Reward with Adjustment by Opposite Query*. The *i) average* method acts as the baseline for our evaluation.  
 
 > NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[5]</sup>
 
@@ -294,6 +296,23 @@ There is an excellent paper [“Semantic Oppositeness for Inconsistency and Disa
 
 ## Final Thoughts
 
+### Ethical Consideration
+
+Since our proposed search engine uses product description and customer reviews as the search content, results are inevitably biased to products with more reviews. In other words,  products with more reviews will have a higher probability to be returned. This can create a harmful effect for new products where they will have very low chances for being found and reached by customers.
+
+One potential solution to reduce this unfairness is to introduce randomness in the search engine where products with similar natures (according to the product descriptions) but no corresponding reviews can still be returned by chance. Another possible solution is from a product design perspective where we can recommend new products along with the search return results. 
+
+### Future Improvement
+
+In this project, we have built a product search engine which uses product descriptions and customer reviews as the content for search.  This provides a richer context for customers to find their targets on e-commerce web sites. We have also introduced our ranking algorithms for calculating the product level similarity scores which beated the baseline method using average. Although we found the opposite query method is not as effective as we originally thought due to the nature of how embeddings are built in the computing domain, still we have found semantic oppositeness has huge potential in improving information retrieval by separation of contradicting findings. 
+
+For future work, we believe there is a need to design a more effective measure on semantic oppositeness such that embeddings can better represent the oppositeness between two words. On the other hand, our current product search engine implementation just directly uses similarity to come up with the result. We believe building a deep learning model with the embeddings of the product review context and the search query, where the embeddings have considered the semantic oppositeness measure mentioned above, could greatly improve the overall result. 
+
+## Resources 
+
+1. All our source codes including Jupyter notebooks and a Streamlit application can be found on Github https://github.com/gen-exody/nes
+
+2. We have built a prototype application on Streamlit which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. 
 
 
 
