@@ -11,3 +11,7 @@ resources/data/temp/df_opposite_query_plot_rewrite.csv
 resources/data/temp/df_query_plot.csv
 notebooks/nes.ini
 resources/data/apparel_15to25_product_title_only.pkl
+.vscode/launch.json
+.streamlit/secrets.toml
+apparel_10to14.tsv.gz
+apparel_10to14_review_cosine.faissindex
