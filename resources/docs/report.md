@@ -12,7 +12,7 @@ When customers go online to purchase from e-commerce websites, product reviews a
 
 We propose to build a product search application which allows customers to search with natural language queries. Unlike traditional product search engines which are mainly based on predefined categories and keywords in product descriptions, our proposed solution returns results with consideration of customer reviews. We believe this search engine can greatly improve customer experience over product searching on e-commerce websites. 
 
-## Data Source and scope
+## Data Source and Scope
 
 We used the [Amazon Customer Review](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset) dataset for our application. This dataset contains information of Amazon products and corresponding reviews from 1995 to 2015. There are 37 product categories where we have chosen the Apparel product group. We have also limited our scope to 2015 and further divided the data into two sub-groups. 
 - The first group is products with 15-25 reviews. This becomes our development dataset
