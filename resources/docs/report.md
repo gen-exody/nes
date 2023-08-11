@@ -1,6 +1,6 @@
 # Customer Review Driven Product Search Engine
 
-<img src="../img/umsi.png" align="left"/>
+<img src="https://github.com/gen-exody/nes/blob/master/resources/img/umsi.png?raw=true" align="left"/>
 
 *This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*  
 
