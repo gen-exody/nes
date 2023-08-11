@@ -1,6 +1,8 @@
 # Customer Review Driven Product Search Engine
 
-*This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*
+<img src="../img/umsi.png" align="left"/>
+
+*This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*  
 
 *Elaine Chen, Gen Ho, Varshini Rana (8-14-2023)*
 
