@@ -275,6 +275,10 @@ def change_selectbox():
     st.session_state.user_query = ''
 
 
+with st.sidebar:
+    st.write("This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan")
+    st.write("For details, please vist https://github.com/gen-exody/nes")
+
 
 col1, col2 = st.columns([0.7, 0.3])
 with col1:
