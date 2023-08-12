@@ -49,7 +49,7 @@ def download_s3_object(object_name, bucket_name, session):
 
 s3 = get_s3_session()
 
-#@st.cache_data
+
 def download_data(df_file, bucket_name):
     cols = ['product_id', 'review_id', 'star_rating', 'product_title', 'review_body']
     if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=s3)):
@@ -57,7 +57,7 @@ def download_data(df_file, bucket_name):
         df_apparel = df_apparel[cols]
     return df_apparel
 
-#@st.cache_data
+
 def download_index(faiss_file, bucket_name):
     if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=s3)):
         faiss_index = faiss.read_index(faiss_file)
@@ -76,7 +76,7 @@ def get_embedding(text, model="text-embedding-ada-002"):
    
    return np.array(openai.Embedding.create(input = [text], model=model)['data'][0]['embedding'], dtype='float32').reshape(1, -1)
 
-@st.cache_data
+
 def search_with_original_query(df, faiss_index, query_embedding, num_of_records=100):
     # we need to normalize the question embedding in order to use cosine similarity to search 
     faiss.normalize_L2(query_embedding)
@@ -94,7 +94,7 @@ def search_with_original_query(df, faiss_index, query_embedding, num_of_records=
     
     return df_result, result_idx
 
-@st.cache_data
+
 def generate_opposite_query(orignal_query=''):
 
     prompt="""
@@ -125,7 +125,7 @@ def generate_opposite_query(orignal_query=''):
 
     return response['choices'][0]['text']
 
-@st.cache_data
+
 def search_with_opposite_query(df, faiss_index, opposite_query_embedding, original_query_result_index, num_of_records=100):
 
     faiss.normalize_L2(opposite_query_embedding)
