@@ -76,7 +76,7 @@ def get_embedding(text, model="text-embedding-ada-002"):
    
    return np.array(openai.Embedding.create(input = [text], model=model)['data'][0]['embedding'], dtype='float32').reshape(1, -1)
 
-
+@st.cache_data
 def search_with_original_query(df, faiss_index, query_embedding, num_of_records=100):
     # we need to normalize the question embedding in order to use cosine similarity to search 
     faiss.normalize_L2(query_embedding)
@@ -94,7 +94,7 @@ def search_with_original_query(df, faiss_index, query_embedding, num_of_records=
     
     return df_result, result_idx
 
-
+@st.cache_data
 def generate_opposite_query(orignal_query=''):
 
     prompt="""
@@ -125,7 +125,7 @@ def generate_opposite_query(orignal_query=''):
 
     return response['choices'][0]['text']
 
-
+@st.cache_data
 def search_with_opposite_query(df, faiss_index, opposite_query_embedding, original_query_result_index, num_of_records=100):
 
     faiss.normalize_L2(opposite_query_embedding)
@@ -206,7 +206,7 @@ def cal_product_similarity_score(df, method='discount_reward'):
 
     return df
 
-@st.cache_data
+
 def get_final_search_result(df_reconcile_result, clipping=0, weight=0, method='discount_reward'):
     """
     Method 1:   Calculate product level similarity score by Average
