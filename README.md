@@ -7,7 +7,7 @@
 *Elaine Chen, Gen Ho, Varshini Rana (8-14-2023)*
 
 
-## Background & Motivation
+## Motivation
 
 When customers go online to purchase from e-commerce websites, product reviews are a vital source of information to reference as the target products cannot be physically touched. However, reading through all the reviews and comparing across different products could be time consuming and challenging. 
 
@@ -46,13 +46,13 @@ Here is the logical architecture of our solution. We will go over the implementa
 ### GitHub project file structure
 
     .
-    |____notebooks                         # research jupyter notebooks 
-    |____resources                         # 
-    | |____binary                          # stores the Faiss index after created
-    | |____data                            # stores the source data
-    | |____eval                            # stores project evaluation results by raters
-    | |____img                             # stores image files
-    | |____output                          # stores search engine outputs for evaluation
+    |____notebooks/                        # research jupyter notebooks 
+    |____resources/                        # 
+    | |____binary/                         # stores the Faiss index after created
+    | |____data/                           # stores the source data
+    | |____eval/                           # stores project evaluation results by raters
+    | |____img/                            # stores image files
+    | |____output/                         # stores search engine outputs for evaluation
     |____streamlit_app.py                  # Streamlit application
     |____README.md                         # this file
 
