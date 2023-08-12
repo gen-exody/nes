@@ -50,14 +50,14 @@ def download_s3_object(object_name, bucket_name, session):
 @st.cache_data
 def download_data(df_file, bucket_name, _s3):
     cols = ['product_id', 'review_id', 'star_rating', 'product_title', 'review_body']
-    if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=s3)):
+    if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=_s3)):
         df_apparel = pd.read_csv(df_file, sep='\t', compression='gzip')
         df_apparel = df_apparel[cols]
     return df_apparel
 
 @st.cache_data
 def download_index(faiss_file, bucket_name, _s3):
-    if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=s3)):
+    if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=_s3)):
         faiss_index = faiss.read_index(faiss_file)
     return faiss_index
 
@@ -139,7 +139,7 @@ def search_with_opposite_query(df, faiss_index, opposite_query_embedding, origin
 
     return df_opposite_result
 
-@st.cache_data
+
 def get_reconcile_result(df_result_original, df_result_opposite):
 
     df_reconcile_result = df_result_original.merge(df_result_opposite[['review_id', 'distance']], 
@@ -153,7 +153,7 @@ def get_reconcile_result(df_result_original, df_result_opposite):
     return df_reconcile_result
 
 # Helper function to clip the distance_opposite
-@st.cache_data
+
 def clip_distance_opposite(df, clipping=0.5):
     df = df.sort_values(by='distance_opposite', ascending=False).reset_index(drop=True)
     # Flatten the first n% with distance_opposite sorted in descending order  
@@ -163,7 +163,7 @@ def clip_distance_opposite(df, clipping=0.5):
     return df
 
 # Helper function to calculate adjsuted distance using the distance_oppsite as a penalty term
-@st.cache_data
+
 def cal_adjusted_distance(df, k=0.5):
     df['distance_adjusted'] = df.apply(lambda row: row['distance_original'] + (k * 1/row['distance_opposite']), axis='columns')
     
@@ -171,7 +171,7 @@ def cal_adjusted_distance(df, k=0.5):
 
 
 # Helper function to calculate review level similarity scores
-@st.cache_data
+
 def cal_review_similarity_score(df):
     # find max of distance_adjusted  
     max_distance_adjusted  = df['distance_adjusted'].max()
@@ -182,7 +182,7 @@ def cal_review_similarity_score(df):
 
 
 # Helper function to calculate the product level similarity scores 
-@st.cache_data
+
 def cal_product_similarity_score(df, method='discount_reward'):
 
     if method == 'average':
