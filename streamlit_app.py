@@ -47,17 +47,19 @@ def download_s3_object(object_name, bucket_name, session):
 
     return True
 
+s3 = get_s3_session()
+
 @st.cache_data
-def download_data(df_file, bucket_name, _s3):
+def download_data(df_file, bucket_name):
     cols = ['product_id', 'review_id', 'star_rating', 'product_title', 'review_body']
-    if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=_s3)):
+    if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=s3)):
         df_apparel = pd.read_csv(df_file, sep='\t', compression='gzip')
         df_apparel = df_apparel[cols]
     return df_apparel
 
 @st.cache_data
-def download_index(faiss_file, bucket_name, _s3):
-    if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=_s3)):
+def download_index(faiss_file, bucket_name):
+    if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=s3)):
         faiss_index = faiss.read_index(faiss_file)
     return faiss_index
 
@@ -244,9 +246,9 @@ df_file = 'apparel_10to14.tsv.gz'
 bucket_name = 'nescapstone'
 faiss_file = 'apparel_10to14_review_cosine.faissindex'
 
-s3 = get_s3_session()
-df_apparel = download_data(df_file, bucket_name, s3)
-faiss_index = download_index(faiss_file, bucket_name, s3)
+
+df_apparel = download_data(df_file, bucket_name)
+faiss_index = download_index(faiss_file, bucket_name)
 
 
 # Pre-defined search queries
