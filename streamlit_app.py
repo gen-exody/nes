@@ -49,7 +49,7 @@ def download_s3_object(object_name, bucket_name, session):
 
 s3 = get_s3_session()
 
-@st.cache_data
+#@st.cache_data
 def download_data(df_file, bucket_name):
     cols = ['product_id', 'review_id', 'star_rating', 'product_title', 'review_body']
     if (download_s3_object(object_name=df_file, bucket_name=bucket_name, session=s3)):
@@ -57,7 +57,7 @@ def download_data(df_file, bucket_name):
         df_apparel = df_apparel[cols]
     return df_apparel
 
-@st.cache_data
+#@st.cache_data
 def download_index(faiss_file, bucket_name):
     if (download_s3_object(object_name=faiss_file, bucket_name=bucket_name, session=s3)):
         faiss_index = faiss.read_index(faiss_file)
