@@ -283,7 +283,7 @@ Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 
 Mean Reciprocal Rank (MRR)  is another measurement of the goodness of ranking by measuring how far down the ranking the first relevant document is. For details, please refer to this article - [Compute Mean Reciprocal Rank (MRR) using Pandas](https://softwaredoug.com/blog/2021/04/21/compute-mrr-using-pandas.html). The MRR result is shown in **Figure 7** below.
 
 <p>
-    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="MRR across Ranking Methods"/>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/mrr_box_plot.png?raw=true" alt="MRR across Ranking Methods"/>
 </p>
 <p align="center"><i>Figure 7: MRR across Ranking Methods</i></p> 
 
@@ -306,10 +306,10 @@ We took an example to further illustrate the idea. Here we use this original que
 <p>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/embedding_analysis.png?raw=true" alt="Embedding Analysis"/>
 </p>
-<p align="center"><i>Figure 7: (Left) Heatmap of the Original query, Opposite query and first 20 results. (Right) Adjectives and their Antonyms in the Embedding Space</i></p>
+<p align="center"><i>Figure 8: (Left) Heatmap of the Original query, Opposite query and first 20 results. (Right) Adjectives and their Antonyms in the Embedding Space</i></p>
 
 
-In **Figure 7**, on the the left it shows the heatmap of the embeddings (reduced to 10 dimensions by UMAP) for the original query, opposite query and the first 20 search results; whereas on the right it shows the scatter plot of the embeddings (reduced to 2 dimension by UMAP) for the adjectives and their corresponding antonyms used in the original query and the opposite query. 
+In **Figure 8**, on the the left it shows the heatmap of the embeddings (reduced to 10 dimensions by UMAP) for the original query, opposite query and the first 20 search results; whereas on the right it shows the scatter plot of the embeddings (reduced to 2 dimension by UMAP) for the adjectives and their corresponding antonyms used in the original query and the opposite query. 
 
 From the heatmap, we can realize that while the original query and the opposite query have some differences, it is not as different as we expect. On the other hand, from the scatter plot we can see that an adjective and its antonym are not very far away from each other in the vector space. Look at _“hot and cool”_, they are actually very close together!
 
