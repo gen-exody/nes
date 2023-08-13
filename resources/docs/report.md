@@ -166,7 +166,7 @@ We have come up with 3 strategies for calculating the product level similarity s
    
    However, upon reviewing the line chart **(Figure 2, left)** of the distance between the original query and the search results, plus the one of the opposite query, we found the behavior was not as expected. Specifically, the two lines were too close which can not effectively reflect the opposite concept. We suspected this was caused by the nouns in the query.
 
-   <P>
+   <P align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/design_opposite_query.png?raw=true" alt="Design Opposite Query"/>
    </P>
    <p align="center"><i>Figure 2: (Left) Rewrite Whole Query. (Right) Use Antonyms with corresponding meaning</i></p>
@@ -203,16 +203,16 @@ We have come up with 3 strategies for calculating the product level similarity s
 
    After investigating the search results sorted by distance_opposite in descending order, we found that while top portions are really far away from the opposite query, their contents were not most relevant to the original search query **(Figure 3)**. This means we cannot just adding the reciprocal of the opposite query distance as a penalty term (we want to penalize reviews closer to the opposite query thus taking reciprocal) since this would potentially overboost those `product_title + review_body` that are actually not relevant to the product search.
 
-   <figure>
+   <p align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/opposite_query_top5.png?raw=true" alt="Top 5 results sorted by distance_opposite in descending order"/>
-   </figure>
+   </p>
    <p align="center"><i>Figure 3: Top 5 results sorted by distance_opposite in descending order</i></p>
    
    We came up with 2 strategies to handle this issue. 
    - We have introduced a clipping mechanism where we flatten certain portions of the top ranked (descending order) opposite query distances. Through testing with different samples, we have decided to clip the top 10 percentile for our implementation. The idea is illustrated by **Figure 4** below.
    - We have added weight to the penalty term which has been set to 0.5 in our implementation.  
 
-   <p>
+   <p align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/clipping.png?raw=true" alt="Clipping"/>
    </p>
    <p align="center"><i>Figure 4: Distance before and after clipping (highlighted in red)</i></p>
@@ -268,7 +268,7 @@ Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ra
 The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. You can refer to the Appendix for the detailed scores. 
 
 
-<p>
+<p align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="Evaluation Result Analysis"/>
 </p>
 <p align="center"><i>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</i></p> 
@@ -282,7 +282,7 @@ Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 
 
 Mean Reciprocal Rank (MRR)  is another measurement of the goodness of ranking by measuring how far down the ranking the first relevant document is. For details, please refer to this article - [Compute Mean Reciprocal Rank (MRR) using Pandas](https://softwaredoug.com/blog/2021/04/21/compute-mrr-using-pandas.html). The MRR result is shown in **Figure 7** below.
 
-<p>
+<p align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/mrr_box_plot.png?raw=true" alt="MRR across Ranking Methods"/>
 </p>
 <p align="center"><i>Figure 7: MRR across Ranking Methods</i></p> 
@@ -303,7 +303,7 @@ We took an example to further illustrate the idea. Here we use this original que
 - **Opposite Query**: _Short means having little length. Thick means having a greater than usual measure across. Unbreathable means not allowing air to pass through. Hot means having or giving out a great deal of heat._
 
 
-<p>
+<p align="center">
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/embedding_analysis.png?raw=true" alt="Embedding Analysis"/>
 </p>
 <p align="center"><i>Figure 8: (Left) Heatmap of the Original query, Opposite query and first 20 results. (Right) Adjectives and their Antonyms in the Embedding Space</i></p>
@@ -356,4 +356,24 @@ For future work, we believe there is a need to design a more effective measure o
 
 [6] Naida et al. (Apr 27, 2021). "Semantic Oppositeness for Inconsistency and Disagreement Detection in Natural Language". https://www.cs.uoregon.edu/Reports/PHD-202012-deSilva.pdf. Accessed Jul 28, 2023
 
+
 ## Appendix
+
+### Queries for Evaluation
+
+Below table shows the 9 queries that we used in the search engine result evaluation. 
+
+| Num.  | Original | Opposite |
+| ---   | ---      | ---      |
+| Q1    | Long thin cotton socks for men, need to be breathable, even feeling cool for summer time. | Short means having little length. Thick means having a greater than usual measure across. Unbreathable means not allowing air to pass through. Hot means having or giving out a great deal of heat. |
+| Q2    | Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer. |  Wrinkled means having many wrinkles. Clumsy means lacking grace in movement or posture. Short means having little length. Bulky means large and unwieldy. Loose means not fitting closely or tightly. |
+| Q3    | DC or Marvel superhero costumes for adults. Comes with a mask.  Deluxe and high quality. Comfortable to wear. Washable and durable. | Inferior means of lower quality. Basic means of the simplest kind. Uncomfortable means causing discomfort. Unwashable means not able to be washed. Fragile means easily broken. |
+| Q4    | Baby footed bodysuit, made with soft and comfortable material, keeps the baby snug and warm, washed and dried well without shrinking. | Rough means having an uneven or irregular surface. Uncomfortable means causing discomfort. Loose means not firmly or tightly fixed in place. Unwarm means not providing or feeling warmth. Shrinking means becoming smaller in size. |
+| Q5    | Women's knee-length A-line dress, looks cutie, made with high quality and relatively thick material, fits slim body. | Unattractive means not pleasing in appearance. Low quality means inferior in nature. Thin material means having little thickness. Loose-fitting means not fitting closely. |
+| Q6    | Men's lightweight packable down jacket, wind-Resistant, quilted design, snug fit, warm but breathable. | Heavy means having great weight. Unquilted means not having a quilted pattern. Loose means not tight or close. Cold means having a low temperature. Stuffy means not allowing air to circulate freely. |
+| Q7    | Women's high-waisted leggings, tummy control for slimmer look, black color, moisture-wicking fabric, non-see-through. | Low-waisted means having a waistline that is lower than usual. Bulky means large and unwieldy. White means the color of light containing equal amounts of all visible wavelengths. Damp means slightly wet. Transparent means allowing light to pass through so that objects behind can be distinctly seen. |
+| Q8    | Men's skinny fit stretch jeans, tight on legs but fits good on hips, soft, comfortable and durable. | Loose means not tight or taut. Unfitting means not suitable or appropriate. Rough means having an uneven or irregular surface. Uncomfortable means causing discomfort. Fragile means easily broken. |
+| Q9    | Kid's Rain jacket with hood. Made from waterproof material that keeps dry even in heavy rain. Lightweight but able to keep body warm. |  Sodden means extremely wet. Non-waterproof means not impermeable to water. Heavy means having great weight. Unwarm means not warm. |
+
+
+
