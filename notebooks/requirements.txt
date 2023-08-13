@@ -7,4 +7,5 @@ session_info==1.0.0
 sklearn==1.2.2
 PIL==9.4.0
 umap==0.5.3
-simpledorff
+pingouin==0.5.3
+krippendorff

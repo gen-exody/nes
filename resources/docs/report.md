@@ -26,11 +26,15 @@ On the other hand, we have also formulated our own ranking algorithm with the ai
 
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
 
-<figure>
-  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" alt="Logical Architecture"/>
-  <figcaption>Figure 1: Application Logical Architecture.</figcaption>
-</figure>  
-  
+
+<p align="center">
+  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" title="Logical Architecture">
+</p>
+<p align="center"><i>Figure 1: Application Logical Architecture.</i></p>
+
+
+
+
 1. Use OpenAI service to transform the documents of `product_tile + review_body` into document embeddings
 2. The document embeddings are indexed by Faiss 
 3. Use OpenAI service to transform the product search query into query embeddings
@@ -120,7 +124,7 @@ We have come up with 3 strategies for calculating the product level similarity s
 
    As each review can contain specific information, in calculating the product level similarity score, we should collectively consider all reviews. On the other hand, we actually want to reward a product with more reviews that match the search criteria since it increases a customer’s confidence in this product. Therefore, aggregation is a better choice than averaging. However, we also do not want the result to be dominated by the number of reviews at the same time. So, here comes the idea of Discounted Reward.
 
-   Under this method, we firstly sort records by similarity scores in descending order within each product. Then, we have:
+   Under this method, we firstly sort records by similarity scores in descending order within each product. Then, we have: <br>
 
    $$Product Similarity Score = \displaystyle\sum_{i=1}^{n}\frac{S_i}{2^2}$$
    where $S$ is the record level similarity score, $n$ is the total number of records within a product, $i$ is the rank of the current record
@@ -162,11 +166,14 @@ We have come up with 3 strategies for calculating the product level similarity s
    
    However, upon reviewing the line chart **(Figure 2, left)** of the distance between the original query and the search results, plus the one of the opposite query, we found the behavior was not as expected. Specifically, the two lines were too close which can not effectively reflect the opposite concept. We suspected this was caused by the nouns in the query.
 
-   <figure>
+   <P>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/design_opposite_query.png?raw=true" alt="Design Opposite Query"/>
-    <figcaption>Figure 2: (Left) Rewrite Whole Query. (Right) Use Antonyms with corresponding meaning</figcaption>
-   </figure>  
+   </P>
+   <p align="center"><i>Figure 2: (Left) Rewrite Whole Query. (Right) Use Antonyms with corresponding meaning</i></p>
    
+
+
+
    Then we changed our strategy to just build the opposite query with the antonyms and their meanings. This became:
    - **Original Query**: _Wrinkle free chiffon blouse, sleek style, long sleeve, slim fit, with comfortable inside layer._
    - **Opposite Query**: _Wrinkled means having many creases or folds. Clumsy means lacking grace in movement or posture. Short means having little length. Bulky means large and unwieldy. Uncomfortable means causing discomfort._
@@ -198,24 +205,24 @@ We have come up with 3 strategies for calculating the product level similarity s
 
    <figure>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/opposite_query_top5.png?raw=true" alt="Top 5 results sorted by distance_opposite in descending order"/>
-    <figcaption>Figure 3: Top 5 results sorted by distance_opposite in descending order</figcaption>
-   </figure>  
+   </figure>
+   <p align="center"><i>Figure 3: Top 5 results sorted by distance_opposite in descending order</i></p>
    
    We came up with 2 strategies to handle this issue. 
    - We have introduced a clipping mechanism where we flatten certain portions of the top ranked (descending order) opposite query distances. Through testing with different samples, we have decided to clip the top 10 percentile for our implementation. The idea is illustrated by **Figure 4** below.
    - We have added weight to the penalty term which has been set to 0.5 in our implementation.  
 
-   <figure>
+   <p>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/clipping.png?raw=true" alt="Clipping"/>
-    <figcaption>Figure 4: Distance before and after clipping (highlighted in red) </figcaption>
-   </figure>
+   </p>
+   <p align="center"><i>Figure 4: Distance before and after clipping (highlighted in red)</i></p>
 
-   The finalized formula for the adjusted distance is shown below. 
+
+   The finalized formula for the adjusted distance is shown below.  
    
+   $$Adjusted Distance =  clip\ f(D_{original}) + K\times\frac{1}{D_{opposite}}$$ 
 
-      $$Adjusted Distance =  clip\ f(D_{original}) + K\times\frac{1}{D_{opposite}}$$
-
-   where $clip\ f()$ is our custom function for clipping, $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penality term.
+   where $clip\ f()$ is our custom function for clipping, $D_{original}$ is the cosine distance of the original query, $D_{opposite}$ is the cosine distance of the opposite query, and $K$ is the weight of the penalty term.
 
 ## Unsupervised Data Analysis  
 
@@ -227,18 +234,20 @@ In preparing the below scatter plot **(Figure 5)**, we colored the dots with the
 
 Please refer to the Appendix for the list of queries we have defined.
 
-<figure>
-    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/unsupervised_analysis.png?raw=true" alt="Product Type Analysis"/>
-    <figcaption>Figure 5: Product Types Analysis </figcaption>
-</figure>  
-    
- 
+
+<p align="center">
+  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/unsupervised_analysis.png?raw=true" title="Product Type Analysis">
+</p>
+<p align="center"><i>Figure 5: Product Types Analysis</i></p>
+
 
 ## Result Evaluation and  Analysis 
 
 We have defined 9 queries to search over the evaluation dataset (products with 11-14 reviews). The output was then rated by 3 raters with a scale of 1 to 5 where 1 denoted “Not relevant at all” while 5 denoted “Perfectly relevant”. 
 
-We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. *i) Average*, *ii) Discounted Reward*, and *iii) Discounted Reward with Adjustment by Opposite Query*. The *i) average* method acts as the baseline for our evaluation.  
+We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) and [Mean Reciprocal Rank (MRR)](https://en.wikipedia.org/wiki/Mean_reciprocal_rank) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. *i) Average*, *ii) Discounted Reward*, and *iii) Discounted Reward with Adjustment by Opposite Query*. The *i) average* method acts as the baseline for our evaluation.  
+
+####  Normalized Discounted Cumulative Gain (NDCG)
 
 > NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[5]</sup>
 
@@ -254,21 +263,36 @@ Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ra
 | Discounted Reward Only        | 0.837         | 0.861         | 0.939         |
 | Discounted Reward with Adjustment by Opposite Query   | 0.837 | 0.862 | 0.941 |
 
-Table 1: NDCG@n scores across the 3 ranking methods
+<p align="center"><i>Table 1: NDCG@n scores across the 3 ranking methods</i></p>
 
 The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. You can refer to the Appendix for the detailed scores. 
 
 
-<figure>
+<p>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="Evaluation Result Analysis"/>
-    <figcaption>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</figcaption>
-</figure>  
+</p>
+<p align="center"><i>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</i></p> 
 
 
 From the table and visualizations above, we can notice that generally the *Method 2) Discounted Reward Only* and *Method 3) Discounted Reward with Adjustment by Opposite Query* performed better than the *Method 1) Average*. However, *Method 2* is just a tiny bit better than *Method 3* in NDCG@5 and NDCG@10. The 95% confidence intervals are very similar for all three methods within the same NDCG group. On the other hand, *Method 1* had a 37% (10/27) chance of getting the best results while for *Method 2* and *Method 3* it was 41% (11/27) and 22% (6/27) respectively.
 
-
 Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 2* had almost a double chance to outperform *Method 3*. It means *Method 3* performed much better in some cases only but not all. 
+
+#### Mean Reciprocal Rank (MRR) 
+
+Mean Reciprocal Rank (MRR)  is another measurement of the goodness of ranking by measuring how far down the ranking the first relevant document is. For details, please refer to this article - [Compute Mean Reciprocal Rank (MRR) using Pandas](https://softwaredoug.com/blog/2021/04/21/compute-mrr-using-pandas.html). The MRR result is shown in **Figure 7** below.
+
+<p>
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/eval_analysis_chart.png?raw=true" alt="MRR across Ranking Methods"/>
+</p>
+<p align="center"><i>Figure 7: MRR across Ranking Methods</i></p> 
+
+When considering Mean Reciprocal Rank (MRR), *Method 3) Discounted Reward with Adjustment by Opposite Query* performed the best, followed by *Method 1) Average* and *Method 2) Discounted Reward Only* performed the worst. Based on the box plot, user U1 was more inclined to rate a product higher up the resulting product list as "Most relevant" than the other two users (i.e. more lenient), while user U3 was more inclined to rate a product lower down the list as "Most relevant" (i.e more strict).
+
+Overall, *Method 2* seems to have unanimously been deemed to have trouble in putting the most relevant product at the top of the list compared to the other two methods.
+
+
+#### Analysis 
 
 *Method 2* and *Method 3* performed better than *Method 1* in terms of NDCG scores which is within our expectation since *Method 2 and 3* have considered the collective information from all reviews which can better represent human decision models. However, the Opposite Query of *Method 3* did not perform as good as we originally thought. 
 
@@ -279,10 +303,10 @@ We took an example to further illustrate the idea. Here we use this original que
 - **Opposite Query**: _Short means having little length. Thick means having a greater than usual measure across. Unbreathable means not allowing air to pass through. Hot means having or giving out a great deal of heat._
 
 
-<figure>
+<p>
     <img src="https://github.com/gen-exody/nes/blob/master/resources/img/embedding_analysis.png?raw=true" alt="Embedding Analysis"/>
-    <figcaption>Figure 7: (Left) Heatmap of the Original query, Opposite query and first 20 results. (Right) Adjectives and their Antonyms in the Embedding Space</figcaption>
-</figure>
+</p>
+<p align="center"><i>Figure 7: (Left) Heatmap of the Original query, Opposite query and first 20 results. (Right) Adjectives and their Antonyms in the Embedding Space</i></p>
 
 
 In **Figure 7**, on the the left it shows the heatmap of the embeddings (reduced to 10 dimensions by UMAP) for the original query, opposite query and the first 20 search results; whereas on the right it shows the scatter plot of the embeddings (reduced to 2 dimension by UMAP) for the adjectives and their corresponding antonyms used in the original query and the opposite query. 
@@ -314,7 +338,7 @@ For future work, we believe there is a need to design a more effective measure o
 
 1. All our source codes including Jupyter notebooks and a Streamlit application can be found on Github https://github.com/gen-exody/nes
 
-2. We have built a prototype application on Streamlit which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. 
+2. We have built a prototype application on Streamlit which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. https://nescapstone.streamlit.app/
 
 
 
