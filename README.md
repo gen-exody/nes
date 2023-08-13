@@ -68,7 +68,7 @@ In order to run the Jupyter notebooks and the Streamlit application in this proj
 
 To run the Streamlit application in your development environment, you need to firstly run the `source_data_analysis_preprocessing.ipynb`, `create_embedding.ipynb`, and `create_index.ipynb` notebooks, then store the outputted `apparel_10to14.tsv.gz` and `apparel_10to14_review_cosine.faissindex` files in your AWS S3 storage.
 
-You also need to plug below values into the secrets.toml file in the /.streamlit directory. For details, please refer to the [Streamlit documentation]( 
+You also need to plug below values into the secrets.toml file in the `/.streamlit` directory. For details, please refer to the [Streamlit documentation]( 
 https://docs.streamlit.io/streamlit-community-cloud/deploy-your-app/secrets-management). 
 
 
@@ -77,8 +77,14 @@ https://docs.streamlit.io/streamlit-community-cloud/deploy-your-app/secrets-mana
 AWS_ACCESS_KEY_ID = "your_aws_access_key_id"
 AWS_SECRET_ACCESS_KEY = "your_aws_access_key"
 OPENAI_KEY = "your_open_ai_key"
-
 ```
+
+Issue below commond in your OS shell to install the required libraries
+```
+pip install -r requirements.txt
+```
+
+
 Issue below commond in your OS shell to run the Streamlit app
 ```
 streamlit run streamlit_app.py

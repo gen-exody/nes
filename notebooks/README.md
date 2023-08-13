@@ -13,3 +13,16 @@ This set of notebooks is recommended to be read in the following order.
 9. evaluation_analysis.ipynb
 10. opposite_query_analysis.ipynb
 11. antonym_analysis.ipynb
+
+
+In order to run the Jupyter notebooks, you need to have your own [OpenAI subscription](https://openai.com/).
+Please create a file named `nes.ini` in this folder with following content. 
+```
+[OpenAI]
+api_key = [your_openai_key]
+```
+
+Also, please run below commond to install project dependencies
+```
+pip install -r requirements.txt
+```
