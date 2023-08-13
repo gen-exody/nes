@@ -241,13 +241,13 @@ Please refer to the Appendix for the list of queries we have defined.
 <p align="center"><i>Figure 5: Product Types Analysis</i></p>
 
 
-## Result Evaluation and  Analysis 
+## Result Evaluation and Analysis 
 
 We have defined 9 queries to search over the evaluation dataset (products with 11-14 reviews). The output was then rated by 3 raters with a scale of 1 to 5 where 1 denoted “Not relevant at all” while 5 denoted “Perfectly relevant”. 
 
 We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/wiki/Discounted_cumulative_gain) and [Mean Reciprocal Rank (MRR)](https://en.wikipedia.org/wiki/Mean_reciprocal_rank) to evaluate the goodness of ranking for our search engine under the 3 ranking methods, i.e. *i) Average*, *ii) Discounted Reward*, and *iii) Discounted Reward with Adjustment by Opposite Query*. The *i) average* method acts as the baseline for our evaluation.  
 
-####  Normalized Discounted Cumulative Gain (NDCG)
+###  Normalized Discounted Cumulative Gain (NDCG)
 
 > NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[5]</sup>
 
@@ -278,7 +278,7 @@ From the table and visualizations above, we can notice that generally the *Metho
 
 Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 2* had almost a double chance to outperform *Method 3*. It means *Method 3* performed much better in some cases only but not all. 
 
-#### Mean Reciprocal Rank (MRR) 
+### Mean Reciprocal Rank (MRR) 
 
 Mean Reciprocal Rank (MRR)  is another measurement of the goodness of ranking by measuring how far down the ranking the first relevant document is. For details, please refer to this article - [Compute Mean Reciprocal Rank (MRR) using Pandas](https://softwaredoug.com/blog/2021/04/21/compute-mrr-using-pandas.html). The MRR result is shown in **Figure 7** below.
 
@@ -292,7 +292,7 @@ When considering Mean Reciprocal Rank (MRR), *Method 3) Discounted Reward with A
 Overall, *Method 2* seems to have unanimously been deemed to have trouble in putting the most relevant product at the top of the list compared to the other two methods.
 
 
-#### Analysis 
+### Analysis 
 
 *Method 2* and *Method 3* performed better than *Method 1* in terms of NDCG scores which is within our expectation since *Method 2 and 3* have considered the collective information from all reviews which can better represent human decision models. However, the Opposite Query of *Method 3* did not perform as good as we originally thought. 
 
