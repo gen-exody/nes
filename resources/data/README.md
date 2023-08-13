@@ -4,6 +4,8 @@ The dataset we used is the Amazon US Customer Reviews Dataset, which contains pr
 
 The source data for this projet can be downloaded at [Kaggle](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset?select=amazon_reviews_us_Apparel_v1_00.tsv). More detailed information including the license model can be found [here](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset). 
 
+Please put the downloaded data file `amazon_reviews_us_Apparel_v1_00.tsv.gz` and put in this folder in order to run the `source_data_analysis_preprocessing.ipynb` notebook. 
+
 ### Data Definition 
 
 1. marketplace
