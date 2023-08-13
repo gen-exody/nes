@@ -4,7 +4,7 @@
 
 *This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*  
 
-*Elaine Chen, Gen Ho, Varshini Rana (8-14-2023)*
+*[Elaine Chen](mailto:yulchen@umich.edu), [Gen Ho](mailto:genho@umich.edu), [Varshini Rana](mailto:varshini@umich.edu) (8-14-2023)*
 
 ## Motivation 
 
@@ -21,7 +21,7 @@ We used the [Amazon Customer Review](https://www.kaggle.com/datasets/cynthiaremp
 ## Solution Architecture
 
 Our solution is an embedding-based retrieval (EBR) system where the embeddings are created by the Large Language Model (LLM), OpenAI GPT-3 specifically.   
-EBR is widely accepted nowadays as a better approach than traditional term-based retrieval methods for information retrieval as term-based methods only focus on exact matching, thus lack the consideration for semantically related words <sup>[1]</sup>.  
+EBR is widely accepted nowadays as a better approach than traditional term-based retrieval methods for information retrieval as term-based methods only focus on exact matching, thus lack the consideration for semantically related words <sup>[[1](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>.  
 On the other hand, we have also formulated our own ranking algorithm with the aid of a mechanism which we called the opposite query.  
 
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
@@ -48,7 +48,7 @@ In this section we will go over the major techniques and considerations for buil
 
 ### Create Embeddings
 
-Rather than reinventing the wheel by training our own embeddings, we have decided to use the service offered by OpenAI. Specifically, we have used the `text-embedding-ada-002` model for transforming text into embeddings. This is the best embedding model offered by OpenAI as of now <sup>[2]</sup>. 
+Rather than reinventing the wheel by training our own embeddings, we have decided to use the service offered by OpenAI. Specifically, we have used the `text-embedding-ada-002` model for transforming text into embeddings. This is the best embedding model offered by OpenAI as of now <sup>[[2](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>. 
 
 Creating embedding using API is straightforward, just calling the `openai.Embedding.create()` API then things can be done. However, there is a problem with calling OpenAI service with a large number of calls, that is the rate limit. The rate limit is a restriction that an API imposes on the number of times a client can access the server within a specified period of time. Exceptions will be thrown during our code execution if we call the API in a single batch with our data (around 90k records). Luckily, there are workarounds. 
 
@@ -85,7 +85,7 @@ def transform_column_to_embedding(df, source_column, target_column_name, rate_li
 
 ### Create Index
 
-We use the [Facebook AI Similarity Search (Faiss)](https://github.com/facebookresearch/faiss/wiki/) for vector index creation and similarity search. Faiss offers different kinds of index types. For our use case, we prefer cosine similarity over euclidean distance for similarity (or distance) measurement in building the indexes because of two major reasons <sup>[3]</sup>.   
+We use the [Facebook AI Similarity Search (Faiss)](https://github.com/facebookresearch/faiss/wiki/) for vector index creation and similarity search. Faiss offers different kinds of index types. For our use case, we prefer cosine similarity over euclidean distance for similarity (or distance) measurement in building the indexes because of two major reasons <sup>[[3](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>.   
 
 - cosine similarity is calculated based on the angle between two vectors rather than their magnitudes, thus is better for comparing sentences of variety lengths.   
 - cosine similarity is ranged from -1 (completely dissimilar) to 1 (highly similar) which allows intuitive analysis and comparison. 
@@ -228,7 +228,7 @@ We have come up with 3 strategies for calculating the product level similarity s
 
 Apart from designing and building the ranking algorithm, we also conducted an unsupervised data analysis over our development dataset. The objective was to identify product types in the dataset in order to support the construction of the product search queries for development and  result evaluation. 
 
-We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis)<sup>[4]</sup>. 
+We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis)<sup>[[4](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>. 
 
 In preparing the below scatter plot **(Figure 5)**, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation. 
 
@@ -249,7 +249,7 @@ We use [Normalized Discounted Cumulative Gain (NDCG)](https://en.wikipedia.org/w
 
 ###  Normalized Discounted Cumulative Gain (NDCG)
 
-> NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[5]</sup>
+> NDCG is a measure of the effectiveness of a ranking system, taking into account the position of relevant items in the ranked list. It is based on the idea that items that are higher in the ranking should be given more credit than items that are lower in the ranking. NDCG ranges from 0 to 1, with higher values indicating better performance <sup>[[5](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>
 
 For the details on how NDCG is calculated, we highly recommend this article [“Demystifying NDCG” by Aparna Dhinakaran](https://towardsdatascience.com/demystifying-ndcg-bee3be58cfe0). 
 
@@ -265,7 +265,7 @@ Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ra
 
 <p align="center"><i>Table 1: NDCG@n scores across the 3 ranking methods</i></p>
 
-The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. You can refer to the Appendix for the detailed scores. 
+The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. 
 
 
 <p align="center">
@@ -317,7 +317,7 @@ In fact, while world embeddings can capture semantic relationships between words
 
 This is the reason why our opposite query strategy did not perform as good as we originally expected. Having said that, since the adjectives and their antonyms do have certain distances in the embedding space, they still can help in identifying the contradicting concepts in the reviews and hence improving the search results.
 
-There is an excellent paper [“Semantic Oppositeness for Inconsistency and Disagreement Detection in Natural Language” by Naida et al.](https://www.cs.uoregon.edu/Reports/PHD-202012-deSilva.pdf) covers the topic of semantic oppositeness in the computing domain in very details.<sup>[6]</sup> 
+There is an excellent paper [“Semantic Oppositeness for Inconsistency and Disagreement Detection in Natural Language” by Naida et al.](https://www.cs.uoregon.edu/Reports/PHD-202012-deSilva.pdf) covers the topic of semantic oppositeness in the computing domain in very details.<sup>[[6](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup> 
 
 
 ## Final Thoughts
@@ -340,6 +340,11 @@ For future work, we believe there is a need to design a more effective measure o
 
 2. We have built a prototype application on Streamlit which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. https://nescapstone.streamlit.app/
 
+## Statement of Work
+
+- Elaine Chen -  evaluate search engine result, design and develop Streamlit application
+- Gen Ho - generate project idea, data preprocessing and analysis, design solution architecture, design and development search algorithm, evaluate search engine result, analyze search engine result, report writeup, prepare poster
+- Varshini Rana - define search engine result evaluation guideline, evaluate search engine result, calculate evaluation metrics and analyze of search engine result 
 
 
 ## References
@@ -375,5 +380,39 @@ Below table shows the 9 queries that we used in the search engine result evaluat
 | Q8    | Men's skinny fit stretch jeans, tight on legs but fits good on hips, soft, comfortable and durable. | Loose means not tight or taut. Unfitting means not suitable or appropriate. Rough means having an uneven or irregular surface. Uncomfortable means causing discomfort. Fragile means easily broken. |
 | Q9    | Kid's Rain jacket with hood. Made from waterproof material that keeps dry even in heavy rain. Lightweight but able to keep body warm. |  Sodden means extremely wet. Non-waterproof means not impermeable to water. Heavy means having great weight. Unwarm means not warm. |
 
+### Evaluating Rater Agreeability
 
+The [Intra-Class correlation (ICC)](https://en.wikipedia.org/wiki/Intraclass_correlation) is a quantitative measure to assess the reliability of ratings by multiple subjects. The measure compares the variability of different ratings of the same subject to the total variation across all ratings and all subjects.
 
+The [documentation of the pingouin library](https://pingouin-stats.org/build/html/generated/pingouin.intraclass_corr.html), which contains the Python implementation of ICC, can be referred to for more details.
+
+<p align="center">
+    <img src="https://github.com/gen-exody/nes/blob/master/resources/img/ICC.png?raw=true" alt="ICC Measurement"/>
+</p>
+<p align="center"><i>Figure 9: ICC Measurement</i></p>
+
+The above result table provides the ICC measures for various flavors, the definitions for which are detailed in the [Wikipedia page for ICC](https://en.wikipedia.org/wiki/Intraclass_correlation). In this case, we will be focusing on ICC3k, which is delineated by the following criteria:
+
+Two-way mixed: k fixed raters are defined. Each subject is measured by the k raters.
+Average measures: the reliability is applied to a context where measures of k raters will be averaged for each subject.
+Consistency: in the context of repeated measurements by the same rater, systematic errors of the rater are cancelled and only the random residual error is kept.
+
+For the interpretation of the ICC measure, there are two scales:
+
+**Cicchetti scale:**
+
+* Less than 0.40: poor.
+* Between 0.40 and 0.59: fair.
+* Between 0.60 and 0.74: good.
+* Above 0.75: excellent.
+
+Our ICC value of 0.834 implies that our three raters' inter-rater agreement is "excellent" on the Cicchetti scale with the 95% confidence intervals of 0.8 and 0.87 enabling it to stay within that category.
+
+**Koo and Li scale:**
+
+* Less than 0.50: poor
+* Between 0.50 and 0.74: moderate
+* Between 0.75 and 0.89: good
+* Above 0.90: excellent
+
+Our ICC value of 0.834 implies that our three raters' inter-rater agreement is "good" on the Koo and Li scale with the 95% confidence intervals of 0.8 and 0.87 enabling it to stay within that category.

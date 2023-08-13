@@ -4,7 +4,7 @@
 
 *This is a Capstone project for the Master of Applied Data Science program under School of Information at the University of Michigan*  
 
-*Elaine Chen, Gen Ho, Varshini Rana (8-14-2023)*
+*[Elaine Chen](mailto:yulchen@umich.edu), [Gen Ho](mailto:genho@umich.edu), [Varshini Rana](mailto:varshini@umich.edu) (8-14-2023)*
 
 
 ## Motivation
@@ -30,10 +30,10 @@ On the other hand, we have also formulated our own ranking algorithm with the ai
 
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
 
-<figure>
-  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" alt="Logical Architecture"/>
-  <figcaption>Figure 1: Application Logical Architecture.</figcaption>
-</figure>  
+<p align="center">
+  <img src="https://github.com/gen-exody/nes/blob/master/resources/img/architecture.png?raw=true" title="Logical Architecture">
+</p>
+<p align="center"><i>Figure 1: Application Logical Architecture.</i></p>
   
 1. Use OpenAI service to transform the documents of `product_tile + review_body` into document embeddings
 2. The document embeddings are indexed by Faiss 
@@ -68,7 +68,7 @@ In order to run the Jupyter notebooks and the Streamlit application in this proj
 
 To run the Streamlit application in your development environment, you need to firstly run the `source_data_analysis_preprocessing.ipynb`, `create_embedding.ipynb`, and `create_index.ipynb` notebooks, then store the outputted `apparel_10to14.tsv.gz` and `apparel_10to14_review_cosine.faissindex` files in your AWS S3 storage.
 
-You also need to plug those values into the secrets.toml file in the /.streamlit directory. For details, please refer to the [Streamlit documentation]( 
+You also need to plug below values into the secrets.toml file in the /.streamlit directory. For details, please refer to the [Streamlit documentation]( 
 https://docs.streamlit.io/streamlit-community-cloud/deploy-your-app/secrets-management). 
 
 
@@ -88,5 +88,5 @@ streamlit run streamlit_app.py
 
 1. The detailed report for this project is located at the [Wiki](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine) of this GitHub repository. 
 
-2. We have built a prototype application on Streamlit which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. 
+2. We have built a [prototype application on Streamlit](https://nescapstone.streamlit.app/) which allows users to search products over our evaluation data set - Apparel in 2015 with 10-14 reviews. 
 
