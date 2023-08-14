@@ -327,7 +327,9 @@ There is an excellent paper [“Semantic Oppositeness for Inconsistency and Disa
 
 Since our proposed search engine uses product description and customer reviews as the search content, results are inevitably biased to products with more reviews. In other words,  products with more reviews will have a higher probability to be returned. This can create a harmful effect for new products where they will have very low chances for being found and reached by customers.
 
-One potential solution to reduce this unfairness is to introduce randomness in the search engine where products with similar natures (according to the product descriptions) but no corresponding reviews can still be returned by chance. Another possible solution is from a product design perspective where we can recommend new products along with the search return results. 
+However, as a matter of fact, this is a general problem for all search engines and recommender systems that the control of decision making is shifted from users to algorithms. Thus, bias and discrimination created from the data and algorithms can easily be raised to impact users in favoring or discriminating against certain products.
+
+For our application, one potential solution to reduce this unfairness is to introduce randomness in the search engine where products with similar natures (according to the product descriptions) but no corresponding reviews can still be returned by chance. Another possible solution is from a product design perspective where we can recommend new products along with the search return results. 
 
 ### Future Improvement
 
