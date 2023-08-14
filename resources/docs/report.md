@@ -14,14 +14,15 @@ We propose to build a product search application which allows customers to searc
 
 ## Data Source and Scope
 
-We used the [Amazon Customer Review](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset) dataset for our application. This dataset contains information of Amazon products and corresponding reviews from 1995 to 2015. There are 37 product categories where we have chosen the Apparel product group. We have also limited our scope to 2015 and further divided the data into two sub-groups. 
+We used the **Amazon Customer Review** dataset for our application. This dataset contains information of Amazon products and corresponding reviews from 1995 to 2015. There are 37 product categories where we have chosen the Apparel product group. We have also limited our scope to 2015 and further divided the data into two sub-groups. 
 - The first group is products with 15-25 reviews. This becomes our development dataset
 - The second subgroup is products with 11-14 reviews. This serves as our evaluation set. 
 
+The source data for this projet can be downloaded at [Kaggle](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset?select=amazon_reviews_us_Apparel_v1_00.tsv). More detailed information including the license model can be found [here](https://www.kaggle.com/datasets/cynthiarempel/amazon-us-customer-reviews-dataset). 
+
 ## Solution Architecture
 
-Our solution is an embedding-based retrieval (EBR) system where the embeddings are created by the Large Language Model (LLM), OpenAI GPT-3 specifically.   
-EBR is widely accepted nowadays as a better approach than traditional term-based retrieval methods for information retrieval as term-based methods only focus on exact matching, thus lack the consideration for semantically related words <sup>[[1](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>.  
+Our solution is an embedding-based retrieval (EBR) system where the embeddings are created by the Large Language Model (LLM), OpenAI GPT-3 specifically. EBR is widely accepted nowadays as a better approach than traditional term-based retrieval methods for information retrieval as term-based methods only focus on exact matching, thus lack the consideration for semantically related words <sup>[[1](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>.  
 On the other hand, we have also formulated our own ranking algorithm with the aid of a mechanism which we called the opposite query.  
 
 Here is the logical architecture of our solution. We will go over the implementation details in the next section.  
@@ -228,9 +229,9 @@ We have come up with 3 strategies for calculating the product level similarity s
 
 Apart from designing and building the ranking algorithm, we also conducted an unsupervised data analysis over our development dataset. The objective was to identify product types in the dataset in order to support the construction of the product search queries for development and  result evaluation. 
 
-We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the product_title dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis)<sup>[[4](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>. 
+We firstly used [Uniform Manifold Approximation and Projection (UMAP)](https://umap-learn.readthedocs.io/en/latest/index.html) for Dimension Reduction to reduce the `product_title` dimension from 1,536 to 2. UMAP is a non-linear dimension reduction technique which can provide more optimized separation for 2-dimensions when compared to [Principal Component Analysis (PCA)](https://en.wikipedia.org/wiki/Principal_component_analysis)<sup>[[4](https://github.com/gen-exody/nes/wiki/Customer-Review-Driven-Product-Search-Engine#references)]</sup>. 
 
-In preparing the below scatter plot **(Figure 5)**, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which might mean more suitable for us to construct the queries for development and evaluation. 
+In preparing the below scatter plot **(Figure 5)**, we colored the dots with the star_rating values. This field contains 1-5 star rating of the review. More diverging colors within a product type can hit a higher chance of having contradicting reviews, which could mean more suitable for us to construct the queries for development and evaluation. 
 
 Please refer to the Appendix for the list of queries we have defined.
 
@@ -265,7 +266,7 @@ Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ra
 
 <p align="center"><i>Table 1: NDCG@n scores across the 3 ranking methods</i></p>
 
-The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the top ranking method (with highest mean value) for the 9 queries. 
+The visualization below on the left **(Figure 6, left)**  shows the mean NDCG scores with confidence intervals across the three ranking methods, whereas the one on the right **(Figure 6, right)** shows the best ranking method (with highest mean value) for the 9 queries. 
 
 
 <p align="center">
@@ -274,7 +275,7 @@ The visualization below on the left **(Figure 6, left)**  shows the mean NDCG sc
 <p align="center"><i>Figure 6: (Left) Mean NDCG across the three ranking methods. (Right) Top ranking method for the 9 queries</i></p> 
 
 
-From the table and visualizations above, we can notice that generally the *Method 2) Discounted Reward Only* and *Method 3) Discounted Reward with Adjustment by Opposite Query* performed better than the *Method 1) Average*. However, *Method 2* is just a tiny bit better than *Method 3* in NDCG@5 and NDCG@10. The 95% confidence intervals are very similar for all three methods within the same NDCG group. On the other hand, *Method 1* had a 37% (10/27) chance of getting the best results while for *Method 2* and *Method 3* it was 41% (11/27) and 22% (6/27) respectively.
+From the table and visualizations above, we can notice that generally the *Method 2) Discounted Reward Only* and *Method 3) Discounted Reward with Adjustment by Opposite Query* performed better than the *Method 1) Average*. However, *Method 3* is just a tiny bit better than *Method 2* in NDCG@5 and NDCG@10. The 95% confidence intervals are very similar for all three methods within the same NDCG group. On the other hand, *Method 1* had a 37% (10/27) chance of getting the best results while for *Method 2* and *Method 3* they were 41% (11/27) and 22% (6/27) respectively.
 
 Overall, while *Method 3* had the highest mean NDCG scores, in practice *Method 2* had almost a double chance to outperform *Method 3*. It means *Method 3* performed much better in some cases only but not all. 
 
