@@ -258,11 +258,11 @@ Based on the scores collected from the 3 raters, we calculated the NDCG at 3, 5,
 
 Below table **(Table 1)** shows the resulting mean NDCG@n scores across the 3 ranking methods. 
 
-| Ranking Method                | Mean NDCG@3   | Mean NDCG@5   | Mean NDCG@10  |
+| Ranking Method                | Mean with s.d. NDCG@3   | Mean with s.d. NDCG@5   | Mean with s.d. NDCG@10  |
 | :--------------------------   | -----------:  | ----------:   | -----------:  |
-| Average                       | 0.819         | 0.847         | 0.935         |
-| Discounted Reward Only        | 0.837         | 0.861         | 0.939         |
-| Discounted Reward with Adjustment by Opposite Query   | 0.837 | 0.862 | 0.941 |
+| Average                       | 0.819 $\pm$ 0.083        | 0.847 $\pm$ 0.072         | 0.935 $\pm$ 0.030         |
+| Discounted Reward Only        | 0.837 $\pm$ 0.093       | 0.861 $\pm$ 0.064        | 0.939 $\pm$ 0.035        |
+| Discounted Reward with Adjustment by Opposite Query   | 0.837 $\pm$ 0.103 | 0.862 $\pm$ 0.078 | 0.941 $\pm$ 0.035|
 
 <p align="center"><i>Table 1: NDCG@n scores across the 3 ranking methods</i></p>
 
@@ -327,7 +327,7 @@ There is an excellent paper [“Semantic Oppositeness for Inconsistency and Disa
 
 Since our proposed search engine uses product description and customer reviews as the search content, results are inevitably biased to products with more reviews. In other words,  products with more reviews will have a higher probability to be returned. This can create a harmful effect for new products where they will have very low chances for being found and reached by customers.
 
-However, as a matter of fact, this is a general problem for all search engines and recommender systems that the control of decision making is shifted from users to algorithms. Thus, bias and discrimination created from the data and algorithms can easily be raised to impact users in favoring or discriminating against certain products.
+This is, in fact, a general problem for all search engines and recommender systems that the control of decision making is shifted from users to algorithms. Thus, bias and discrimination created from the data and algorithms can easily be raised to impact users in favoring or discriminating against certain products.
 
 For our application, one potential solution to reduce this unfairness is to introduce randomness in the search engine where products with similar natures (according to the product descriptions) but no corresponding reviews can still be returned by chance. Another possible solution is from a product design perspective where we can recommend new products along with the search return results. 
 
